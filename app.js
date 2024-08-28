@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const configs = require('./configs');
 
-
-
+// import api routes
+const apiRoutes = require('./routes');
+app.use('/api', apiRoutes);
 
 app.listen(configs.app.port, function (err) {
     if (err) {
