@@ -1,11 +1,17 @@
+require('dotenv/config');
 const express = require('express');
 const app = express();
 const configs = require('./configs');
-require('dotenv/config');
+const morgan = require('morgan');
+const bodyParser = require('body-parser')
+
+app.use(morgan('dev'));
+var jsonParser = bodyParser.json();
+// var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 // import api routes
 const apiRoutes = require('./routes');
-app.use('/api', apiRoutes);
+app.use('/api', jsonParser, apiRoutes);
 
 app.listen(process.env.PORT || configs.app.port, function (err) {
     if (err) {
