@@ -20,13 +20,8 @@ async function register(req, res, next) {
         const newUser = await prisma.user.create({
             data: {
                 first_name: req.body.first_name,
-                last_name: req.body.last_name,
                 email: req.body.email,
                 password: hashedPassword,
-                phone: req.body.phone,
-                dob: req.body.dob,
-                gender: req.body.gender,
-                address: req.body.address
             }
         });
         res.status(200).json(newUser);

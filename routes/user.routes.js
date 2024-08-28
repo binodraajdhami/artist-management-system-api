@@ -4,11 +4,10 @@ const userController = require("./../controllers/user.controller");
 
 router.route('/')
     .get(userController.getUsers)
-    .post();
 
 router.route('/:id')
-    .get()
-    .put()
+    .get(userController.getUser)
+    .put(userController.updatUser)
     .delete()
 
 module.exports = router;
