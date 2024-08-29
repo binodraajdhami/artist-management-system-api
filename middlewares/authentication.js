@@ -34,6 +34,8 @@ module.exports = function (req, res, next) {
                         msg: 'User not found'
                     });
                 }
+
+                req.loggedInUser = user;
                 next();
 
             } else {

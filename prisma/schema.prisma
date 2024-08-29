@@ -25,6 +25,8 @@ model User {
   address    String?   @db.VarChar(255)
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
+  Music      Music[]
+  Artist     Artist[]
 }
 
 model Artist {
@@ -38,6 +40,8 @@ model Artist {
   created_at           DateTime @default(now())
   updated_at           DateTime @updatedAt
   Music                Music[]
+  User                 User?    @relation(fields: [userId], references: [id])
+  userId               Int?
 }
 
 model Music {
@@ -49,6 +53,8 @@ model Music {
   updated_at DateTime @updatedAt
   Artist     Artist?  @relation(fields: [artistId], references: [id])
   artistId   Int?
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
 }
 
 enum Gender {

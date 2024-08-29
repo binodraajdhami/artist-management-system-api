@@ -4,6 +4,7 @@ async function addMusic(req, res, next) {
     try {
         const newArtist = await prisma.music.create({
             data: {
+                user_id: req.loggedInUser,
                 artist_id: req.body.artist_id,
                 title: req.body.title,
                 album_name: req.body.album_name,
@@ -63,12 +64,10 @@ async function updatMusic(req, res, next) {
             },
             data: {
                 user_id: req.loggedInUser,
-                name: req.body.name,
-                dob: req.body.dob,
-                gender: req.body.gender,
-                address: req.body.address,
-                first_release_year: req.body.first_release_year,
-                no_of_albums_release: req.body.no_of_albums_release,
+                artist_id: req.body.artist_id,
+                title: req.body.title,
+                album_name: req.body.album_name,
+                genre: req.body.genre
             }
         });
         res.status(200).json(updatedMusic);

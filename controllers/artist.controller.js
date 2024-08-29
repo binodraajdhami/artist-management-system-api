@@ -4,6 +4,7 @@ async function addArtist(req, res, next) {
     try {
         const newArtist = await prisma.artist.create({
             data: {
+                user_id: req.loggedInUser,
                 name: req.body.name,
                 dob: req.body.dob,
                 gender: req.body.gender,
@@ -64,6 +65,7 @@ async function updatArtist(req, res, next) {
                 id: artist.id
             },
             data: {
+                user_id: req.loggedInUser,
                 name: req.body.name,
                 dob: req.body.dob,
                 gender: req.body.gender,
