@@ -4,7 +4,6 @@ async function addArtist(req, res, next) {
     try {
         const newArtist = await prisma.artist.create({
             data: {
-                user_id: req.loggedInUser,
                 name: req.body.name,
                 dob: req.body.dob,
                 gender: req.body.gender,
@@ -23,7 +22,9 @@ async function addArtist(req, res, next) {
 async function getArtists(req, res, next) {
     try {
         const artists = await prisma.artist.findMany({});
+
         res.status(200).json(artists);
+
     } catch (error) {
         next(error)
     }
@@ -63,7 +64,6 @@ async function updatArtist(req, res, next) {
                 id: artist.id
             },
             data: {
-                user_id: req.loggedInUser,
                 name: req.body.name,
                 dob: req.body.dob,
                 gender: req.body.gender,
