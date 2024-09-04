@@ -22,6 +22,7 @@ model User {
   phone      String?   @db.VarChar(20)
   dob        DateTime?
   gender     Gender    @default(M)
+  role       Role      @default(ARTIST)
   address    String?   @db.VarChar(255)
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
@@ -69,4 +70,10 @@ enum Genre {
   CLASSIC
   ROCK
   JAZZ
+}
+
+enum Role {
+  SUPER_ADMIN
+  ARTIST_MANAGER
+  ARTIST
 }
