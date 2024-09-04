@@ -5,10 +5,7 @@ const artistController = require("./../controllers/artist.controller");
 
 router
 	.route("/")
-	.get(
-		[authorization.superAdmin, authorization.artistManager],
-		artistController.getArtists
-	)
+	.get(authorization.superAdminArtistManager, artistController.getArtists)
 	.post(authorization.artistManager, artistController.addArtist);
 
 router

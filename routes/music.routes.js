@@ -5,14 +5,7 @@ const musicController = require("./../controllers/music.controller");
 
 router
 	.route("/")
-	.get(
-		[
-			authorization.superAdmin,
-			authorization.artistManager,
-			authorization.artist,
-		],
-		musicController.getMusics
-	)
+	.get(authorization.superAdminArtistManagerArtist, musicController.getMusics)
 	.post(authorization.artist, musicController.addMusic);
 
 router

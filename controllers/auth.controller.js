@@ -4,7 +4,6 @@ const configs = require("./../configs");
 const prisma = require("./../configs/prisma.client");
 
 async function register(req, res, next) {
-	console.log("req", req.body);
 	try {
 		const isUserExist = await prisma.user.findUnique({
 			where: {

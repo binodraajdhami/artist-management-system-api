@@ -3,8 +3,35 @@ const prisma = require("./../configs/prisma.client.js");
 
 async function getUsers(req, res, next) {
 	try {
-		const users = await prisma.user.findMany({});
-		res.status(200).json(users);
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 10;
+		if (page < 0) {
+			page = 1;
+		}
+
+		if (limit < 0 || limit > 100) {
+			limit = 10;
+		}
+
+		const skep = (page - 1) * limit;
+
+		const users = await prisma.user.findMany({
+			take: limit,
+			skip: skep,
+		});
+
+		const totalUsers = await prisma.user.count();
+		const totalPages = Math.ceil(totalUsers / limit);
+
+		res.status(200).json({
+			users,
+			metadata: {
+				totalUsers,
+				totalPages,
+				currentPage: page,
+				currentLimit: limit,
+			},
+		});
 	} catch (error) {
 		next(error);
 	}
