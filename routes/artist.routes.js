@@ -6,7 +6,7 @@ const artistController = require("./../controllers/artist.controller");
 router
 	.route("/")
 	.get(authorization.superAdminArtistManager, artistController.getArtists)
-	.post(authorization.artistManager, artistController.addArtist);
+	.post(authorization.artistManager, artistController.createArtist);
 
 router
 	.route("/:id")

@@ -24,7 +24,7 @@ async function register(req, res, next) {
 				email: req.body.email,
 				password: hashedPassword,
 				phone: req.body.phone,
-				// dob: req.body.dob,
+				dob: new Date(req.body.dob),
 				gender: req.body.gender,
 				role: req.body.role,
 				address: req.body.address,

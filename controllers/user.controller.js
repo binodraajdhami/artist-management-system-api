@@ -47,7 +47,9 @@ async function getUser(req, res, next) {
 		if (!user) {
 			return res.status(200).json({ msg: "User doesn't exist!" });
 		}
-		res.status(200).json(user);
+		res.status(200).json({
+			user,
+		});
 	} catch (error) {
 		next(error);
 	}
@@ -82,20 +84,24 @@ async function updatUser(req, res, next) {
 				id: user.id,
 			},
 			data: {
-				first_name: req.body.first_name,
-				last_name: req.body.last_name,
-				email: req.body.email,
-				phone: req.body.phone,
-				// dob: req.body.dob,
-				gender: req.body.gender,
-				role: req.body.role,
-				address: req.body.address,
-				password: !req.body.password
-					? user.password
-					: bcrypt.hashSync(req.body.password, 10),
+				first_name: req.body.first_name
+					? req.body.first_name
+					: user.first_name,
+				last_name: req.body.last_name
+					? req.body.last_name
+					: user.last_name,
+				email: req.body.email ? req.body.email : user.email,
+				phone: req.body.phone ? req.body.phone : user.phone,
+				dob: req.body.dob ? new Date(req.body.dob) : user.dob,
+				gender: req.body.gender ? req.body.gender : user.gender,
+				role: req.body.role ? req.body.role : userrole,
+				address: req.body.address ? req.body.address : user.address,
+				password: req.body.password
+					? bcrypt.hashSync(req.body.password, 10)
+					: user.password,
 			},
 		});
-		res.status(200).json(updatedUser);
+		res.status(200).json({ user: updatedUser });
 	} catch (error) {
 		next(error);
 	}
@@ -115,7 +121,7 @@ async function deleteUser(req, res, next) {
 		const deletedUser = await prisma.user.delete({
 			where: { id: user.id },
 		});
-		res.status(200).json(deletedUser);
+		res.status(200).json({ user: deletedUser });
 	} catch (error) {
 		next(error);
 	}
