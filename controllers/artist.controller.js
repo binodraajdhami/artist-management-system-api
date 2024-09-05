@@ -20,7 +20,6 @@ async function createArtist(req, res, next) {
 }
 
 async function getArtists(req, res, next) {
-	console.log(req.query);
 	try {
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 10;

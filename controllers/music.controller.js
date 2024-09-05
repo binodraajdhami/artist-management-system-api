@@ -18,9 +18,43 @@ async function addMusic(req, res, next) {
 
 async function getMusics(req, res, next) {
 	try {
-		const musics = await prisma.music.findMany({});
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 10;
+		if (page < 0) {
+			page = 1;
+		}
 
-		res.status(200).json(musics);
+		if (limit < 0 || limit > 100) {
+			limit = 10;
+		}
+
+		const skep = (page - 1) * limit;
+
+		const musics = await prisma.music.findMany({
+			take: limit,
+			skip: skep,
+			include: {
+				Artist: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+			},
+		});
+
+		const totalMusics = await prisma.artist.count();
+		const totalPages = Math.ceil(totalMusics / limit);
+
+		res.status(200).json({
+			musics,
+			metadata: {
+				totalMusics,
+				totalPages,
+				currentPage: page,
+				currentLimit: limit,
+			},
+		});
 	} catch (error) {
 		next(error);
 	}
@@ -83,7 +117,7 @@ async function deleteMusic(req, res, next) {
 		}
 
 		const deletedMusic = await prisma.music.delete({
-			where: { id: prisma.music.id },
+			where: { id: parseInt(req.params.id) },
 		});
 		res.status(200).json(deletedMusic);
 	} catch (error) {
