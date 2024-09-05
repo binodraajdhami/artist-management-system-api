@@ -3,8 +3,8 @@ const prisma = require("./../configs/prisma.client.js");
 
 async function getUsers(req, res, next) {
 	try {
-		const page = parseInt(req.query.page) || 1;
-		const limit = parseInt(req.query.limit) || 10;
+		const page = Number(req.query.page) || 1;
+		const limit = Number(req.query.limit) || 10;
 		if (page < 0) {
 			page = 1;
 		}
@@ -41,7 +41,7 @@ async function getUser(req, res, next) {
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
-				id: parseInt(req.params.id),
+				id: Number(req.params.id),
 			},
 		});
 		if (!user) {
@@ -59,7 +59,7 @@ async function updatUser(req, res, next) {
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
-				id: parseInt(req.params.id),
+				id: Number(req.params.id),
 			},
 		});
 
@@ -111,7 +111,7 @@ async function deleteUser(req, res, next) {
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
-				id: parseInt(req.params.id),
+				id: Number(req.params.id),
 			},
 		});
 		if (!user) {

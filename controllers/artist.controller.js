@@ -9,7 +9,7 @@ async function createArtist(req, res, next) {
 				gender: req.body.gender,
 				address: req.body.address,
 				first_release_year: new Date(req.body.first_release_year),
-				no_of_albums_release: parseInt(req.body.no_of_albums_release),
+				no_of_albums_release: Number(req.body.no_of_albums_release),
 			},
 		});
 
@@ -21,8 +21,8 @@ async function createArtist(req, res, next) {
 
 async function getArtists(req, res, next) {
 	try {
-		const page = parseInt(req.query.page) || 1;
-		const limit = parseInt(req.query.limit) || 10;
+		const page = Number(req.query.page) || 1;
+		const limit = Number(req.query.limit) || 10;
 		if (page < 0) {
 			page = 1;
 		}
@@ -59,7 +59,14 @@ async function getArtist(req, res, next) {
 	try {
 		const artist = await prisma.artist.findUnique({
 			where: {
-				id: parseInt(req.params.id),
+				id: Number(req.params.id),
+			},
+			include: {
+				Music: {
+					select: {
+						title: true,
+					},
+				},
 			},
 		});
 		if (!artist) {
@@ -75,7 +82,7 @@ async function updatArtist(req, res, next) {
 	try {
 		const artist = await prisma.artist.findUnique({
 			where: {
-				id: parseInt(req.params.id),
+				id: Number(req.params.id),
 			},
 		});
 
@@ -110,7 +117,7 @@ async function deleteArtist(req, res, next) {
 	try {
 		const artist = await prisma.artist.findUnique({
 			where: {
-				id: parseInt(req.params.id),
+				id: Number(req.params.id),
 			},
 		});
 		if (!artist) {
