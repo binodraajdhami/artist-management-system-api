@@ -4,12 +4,14 @@ const app = express();
 const configs = require("./configs");
 const morgan = require("morgan");
 var cors = require("cors");
+var path = require("path");
 
 // Use Third-Party Middlewares
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.resolve(__dirname, "public")));
 
 // Import API Routes
 const apiRoutes = require("./routes");

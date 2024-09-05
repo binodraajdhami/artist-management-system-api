@@ -1,4 +1,93 @@
+const fs = require("fs").promises;
+const csvtojson = require("csvtojson");
+const exceljs = require("exceljs");
 const prisma = require("./../configs/prisma.client.js");
+
+async function exportArtistToCSV(req, res, next) {
+	try {
+		const workbook = new exceljs.Workbook();
+		const worksheet = workbook.addWorksheet("All Artists");
+
+		worksheet.columns = [
+			{ header: "SN", key: "sn" },
+			{ header: "Name", key: "name" },
+			{ header: "Date of Birth", key: "dob" },
+			{ header: "Gender", key: "gender" },
+			{ header: "Address", key: "address" },
+			{ header: "First Release Year", key: "first_release_year" },
+			{ header: "No of Albums Release", key: "no_of_albums_release" },
+			{ header: "Created At", key: "created_at" },
+			{ header: "Updated At", key: "updated_at" },
+		];
+
+		const artistsData = await prisma.artist.findMany({});
+		artistsData.forEach((artist, i) => {
+			artist.sn = i + 1;
+			worksheet.addRow(artist);
+		});
+
+		worksheet.getRow(1).eachCell((cell) => {
+			cell.font = { bold: true };
+		});
+
+		res.setHeader(
+			"Content-Type",
+			"application/vnd.openxmlformats-officedocument.spreadsheatml.sheet"
+		);
+
+		res.setHeader(
+			"Content-Disposition",
+			`attachment; filename=artists.csv`
+		);
+
+		return workbook.csv.write(res).then(() => {
+			res.status(200);
+		});
+	} catch (error) {
+		next(error);
+	}
+}
+
+async function importArtistToCSV(req, res, next) {
+	try {
+		if (req.fileError) return next(req.fileError);
+
+		// Convert CSV file to JSON
+		const response = await csvtojson().fromFile(req.file.path);
+		const csvDatas = [];
+
+		// push to csvDatas array
+		for (let i = 0; i < response.length; i++) {
+			csvDatas.push({
+				name: response[i].name,
+				dob: new Date(response[i].dob),
+				gender: response[i].gender,
+				address: response[i].address,
+				first_release_year: new Date(response[i].first_release_year),
+				no_of_albums_release: Number(response[i].no_of_albums_release),
+			});
+		}
+
+		// createMany
+		const newArtists = await prisma.artist.createMany({
+			data: csvDatas,
+			skipDuplicates: true, // Optional: skips duplicates based on unique constraints
+		});
+
+		// Unlink (delete) the file after processing
+		await fs.unlink(req.file.path);
+
+		res.status(200).json(newArtists);
+	} catch (error) {
+		// If an error occurs, try to unlink the file if it exists
+		if (req.file && req.file.path) {
+			await fs
+				.unlink(req.file.path)
+				.catch((err) => console.error("File unlink error: ", err));
+		}
+		next(error);
+	}
+}
 
 async function createArtist(req, res, next) {
 	try {
@@ -103,7 +192,7 @@ async function updatArtist(req, res, next) {
 					? new Date(req.body.first_release_year)
 					: artist.first_release_year,
 				no_of_albums_release: req.body.no_of_albums_release
-					? req.body.no_of_albums_release
+					? Number(req.body.no_of_albums_release)
 					: artist.no_of_albums_release,
 			},
 		});
@@ -134,6 +223,8 @@ async function deleteArtist(req, res, next) {
 }
 
 module.exports = {
+	exportArtistToCSV,
+	importArtistToCSV,
 	createArtist,
 	getArtists,
 	getArtist,
