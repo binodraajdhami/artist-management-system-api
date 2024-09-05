@@ -154,6 +154,10 @@ async function getArtist(req, res, next) {
 				Music: {
 					select: {
 						title: true,
+						album_name: true,
+						genre: true,
+						created_at: true,
+						updated_at: true,
 					},
 				},
 			},

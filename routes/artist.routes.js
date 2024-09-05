@@ -34,7 +34,7 @@ router
 
 router
 	.route("/:id")
-	.get(authorization.artistManager, artistController.getArtist)
+	.get(authorization.superAdminArtistManager, artistController.getArtist)
 	.put(authorization.artistManager, artistController.updatArtist)
 	.delete(authorization.artistManager, artistController.deleteArtist);
 
@@ -48,9 +48,6 @@ router
 
 router
 	.route("/export/csv")
-	.get(
-		authorization.superAdminArtistManager,
-		artistController.exportArtistToCSV
-	);
+	.get(authorization.artistManager, artistController.exportArtistToCSV);
 
 module.exports = router;
