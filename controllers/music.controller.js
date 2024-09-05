@@ -66,11 +66,19 @@ async function getMusic(req, res, next) {
 			where: {
 				id: parseInt(req.params.id),
 			},
+			include: {
+				Artist: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+			},
 		});
 		if (!music) {
 			return res.status(200).json({ msg: "Music doesn't exist!" });
 		}
-		res.status(200).json(artist);
+		res.status(200).json({ music });
 	} catch (error) {
 		next(error);
 	}
